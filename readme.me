@@ -1,0 +1,44 @@
+Ce projet a pour but de créer une application web dynamique, développée
+en JavaScript, pour permettre aux utilisateurs de 
+-créer, 
+-gérer et 
+-suivre leurs tâches et projets.
+
+Fonctionnalités
+1. Création de tâches avec titre, description, et date d'échéance
+2. Possibilité de marquer une tâche comme terminée
+3. Possibilité de modifier ou de supprimer une tâche
+4. Filtrage des tâches par statut (toutes, actives, terminées)
+5. Option pour afficher les tâches en fonction de leur date d'échéance
+
+l'utilisateur crée une tache dans un tableau
+
+création du tableau en javascript dans lequel l'utilisateur peut creer une tache
+
+
+Structure HTML :
+
+Une zone de saisie pour ajouter de nouvelles tâches.
+Une liste (ul) pour afficher toutes les tâches.
+Des boutons pour chaque action (ajouter, supprimer, marquer comme terminée, modifier).
+Un élément pour afficher des messages d'état (par exemple, "Tâche ajoutée avec succès"). Implémentation JavaScript
+
+Structure de données:
+
+-Utiliser un tableau JavaScript pour stocker les tâches. 
+Chaque tâche est un objet avec les propriétés suivantes :
+-id: Un identifiant unique pour chaque tâche.
+-text: Le texte de la tâche.
+-completed: Un booléen indiquant si la tâche est terminée.
+
+Écouter les événements:
+
+Utiliser des écouteurs d'événements pour détecter 
+les interactions de l'utilisateur (clic sur un bouton, 
+modification du texte dans un champ de saisie).
+Manipuler le DOM:
+
+Utiliser les méthodes DOM pour créer, 
+modifier et supprimer des éléments HTML 
+afin de mettre à jour la liste des tâches 
+en fonction des actions de l'utilisateur.

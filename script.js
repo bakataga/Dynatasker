@@ -1,11 +1,19 @@
 const taches = [];
 console.log(taches);
+
 function ajouterTache() {
   const tache = document.getElementById("nouvelleTache").value;
   const description = document.getElementById("description").value;
   const date = document.getElementById("date").value;
   const taskId = Date.now().toString();
+
+  if (!tache || !description || !date) {
+    alert("Veuillez remplir tous les champs avant d'ajouter une tâche.");
+    return;
+  }
+
   // objet tache avec un ID unique
+
   const nouvelleTache = {
     id: taskId,
     nom: tache,
@@ -17,7 +25,7 @@ function ajouterTache() {
   // ajouter tache a la liste
   const listeTaches = document.getElementById("listeTaches");
   const li = document.createElement("li");
-  li.textContent = `TO DO :  ${nouvelleTache.nom}  WHAT : ${nouvelleTache.description}   AVANT : ${nouvelleTache.date}`;
+  li.textContent = `  ${nouvelleTache.nom}   ${nouvelleTache.description}   ${nouvelleTache.date}`;
   li.classList.add("tache");
   li.dataset.id = nouvelleTache.id;
 
@@ -32,51 +40,83 @@ function ajouterTache() {
   boutonSupprimer.addEventListener("click", () => {
     supprimerTache(nouvelleTache.id);
   });
+  const boutonTerminer = document.createElement("button");
+  boutonTerminer.textContent = "Terminer";
+  boutonTerminer.addEventListener("click", () => {
+    marquerTermine(nouvelleTache.id);
+  });
   li.appendChild(boutonModifier);
-  listeTaches.appendChild(li);
+
   li.appendChild(boutonSupprimer);
+  li.appendChild(boutonTerminer);
+  listeTaches.appendChild(li);
 
   // clear
   document.getElementById("nouvelleTache").value = "";
   document.getElementById("description").value = "";
+
+  trierTachesParDate();
 }
 
 function modifierTache(id) {
   const tache = document.querySelector(`li[data-id='${id}']`);
   if (tache) {
+    // Get current task values (without complex string manipulation)
+    const valeursActuelles = tache.textContent.split(" ");
+
+    // Prompt for new values with pre-filled defaults
     const nouveauNom = prompt(
-      "Modifier le nom:",
-      tache.textContent.split("TO DO :")[1].split("WHAT :")[0].trim()
+      "Nouveau nom de la tâche :",
+      "",
+      valeursActuelles[0]
     );
     const nouvelleDescription = prompt(
-      "Modifier la description:",
-      tache.textContent.split("WHAT :")[1].split("AVANT :")[0].trim()
+      "Nouvelle description :",
+      "",
+      valeursActuelles[1]
     );
-    const nouvelleDate = prompt(
-      "Modifier la date:",
-      tache.textContent.split("AVANT :")[1].trim()
-    );
+    const nouvelleDate = prompt("Nouvelle date :", "", valeursActuelles[2]);
 
+    // Update content only if values were modified
     if (
-      nouveauNom !== null &&
-      nouvelleDescription !== null &&
+      nouveauNom !== null ||
+      nouvelleDescription !== null ||
       nouvelleDate !== null
     ) {
-      tache.textContent = `TO DO : ${nouveauNom}  WHAT : ${nouvelleDescription}   AVANT : ${nouvelleDate}`;
+      tache.textContent = `${nouveauNom || valeursActuelles[0]} ${
+        nouvelleDescription || valeursActuelles[1]
+      } ${nouvelleDate || valeursActuelles[2]}`;
 
-      // Re-add the button to the li element
+      // Clear existing buttons (optional, to avoid duplicates)
+      tache.querySelectorAll("button").forEach((button) => button.remove());
+
+      // Create and append new buttons (similar to initial creation)
       const boutonModifier = document.createElement("button");
       boutonModifier.textContent = "Modifier";
       boutonModifier.addEventListener("click", () => {
-        modifierTache(id);
+        modifierTache(tache.dataset.id); // Use dataset.id for the modified element
       });
+
+      const boutonSupprimer = document.createElement("button");
+      boutonSupprimer.textContent = "Supprimer";
+      boutonSupprimer.addEventListener("click", () => {
+        supprimerTache(tache.dataset.id); // Use dataset.id for the modified element
+      });
+
+      const boutonTerminer = document.createElement("button");
+      boutonTerminer.textContent = "Terminer";
+      boutonTerminer.addEventListener("click", () => {
+        marquerTermine(tache.dataset.id); // Use dataset.id for the modified element
+      });
+
       tache.appendChild(boutonModifier);
+      tache.appendChild(boutonSupprimer);
+      tache.appendChild(boutonTerminer);
     }
   } else {
     console.error("Tâche non trouvée");
   }
 }
-
 function supprimerTache(id) {
   const tache = document.querySelector(`li[data-id='${id}']`);
   if (tache) {
@@ -89,4 +129,55 @@ function supprimerTache(id) {
   } else {
     console.error("Tâche non trouvée");
   }
+}
+
+function marquerTermine(id) {
+  const tache = taches.find((t) => t.id === id);
+  if (tache) {
+    tache.termine = !tache.termine; // Inverse l'état de la tâche
+    const li = document.querySelector(`li[data-id="${id}"]`);
+    if (tache.termine) {
+      li.classList.add("termine");
+    } else {
+      li.classList.remove("termine");
+    }
+  } else {
+    console.error("Tâche non trouvée");
+  }
+}
+function trierTachesParDate() {
+  taches.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+  const listeTaches = document.getElementById("listeTaches");
+  listeTaches.innerHTML = "";
+
+  taches.forEach((tache) => {
+    const li = document.createElement("li");
+    li.textContent = ` ${tache.nom} ${tache.description} ${tache.date}`;
+    li.classList.add("tache");
+    li.dataset.id = tache.id;
+
+    const boutonModifier = document.createElement("button");
+    boutonModifier.textContent = "Modifier";
+    boutonModifier.addEventListener("click", () => {
+      modifierTache(tache.id);
+    });
+
+    const boutonSupprimer = document.createElement("button");
+    boutonSupprimer.textContent = "Supprimer";
+    boutonSupprimer.addEventListener("click", () => {
+      supprimerTache(tache.id);
+    });
+
+    const boutonTerminer = document.createElement("button");
+    boutonTerminer.textContent = "Terminer";
+    boutonTerminer.addEventListener("click", () => {
+      marquerTermine(tache.id);
+    });
+
+    li.appendChild(boutonModifier);
+    li.appendChild(boutonSupprimer);
+    li.appendChild(boutonTerminer);
+    listeTaches.appendChild(li);
+  });
 }
